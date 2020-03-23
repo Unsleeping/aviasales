@@ -16,14 +16,14 @@ const citiesApi = 'cities.json',
     proxy = 'https://cors-anywhere.herokuapp.com/',
     API_KEY = 'a866e1486ad6e2654346f27969b715f3',
     calendar = 'http://min-prices.aviasales.ru/calendar_preload';
-    MAX_COUNT = 10;
+MAX_COUNT = 10;
 
 
 
 // инициализация функций
 
 // get Data from the service
-const getData = (url, callback) => {
+const getData = (url, callback, reject = console.error) => {
     const request = new XMLHttpRequest(); //use constructor to create request
 
     request.open('GET', url); // obtain data from the server and send there our url 
@@ -91,7 +91,7 @@ const getChanges = (num) => {
 
 const getLink = (data) => {
     let link = 'https://www.aviasales.ru/search/';
-    link +=  data.origin;
+    link += data.origin;
 
     const date = new Date(data.depart_date);
 
@@ -108,7 +108,7 @@ const getLink = (data) => {
 };
 
 const createCard = (data) => {
-    const ticket = document.createElement('artickle');
+    const ticket = document.createElement('article');
     ticket.classList.add('ticket');
 
     let deep;
@@ -149,7 +149,7 @@ const createCard = (data) => {
 const renderCheapDay = (cheapTicketOnThatDay) => {
     cheapestTicket.style.display = 'block';
     cheapestTicket.innerHTML = '<h2>Самый дешевый билет на выбранную дату</h2>';
-    const ticket = createCard(cheapTicketOnThatDay[0]); 
+    const ticket = createCard(cheapTicketOnThatDay[0]);
     cheapestTicket.append(ticket);
 };
 
@@ -159,16 +159,16 @@ const renderCheapYear = (cheapTickets) => {
 
     cheapTickets.sort((a, b) => a.value - b.value);
 
-    for (let i = 0; i < cheapTickets.length && i < MAX_COUNT; i++){
+    for (let i = 0; i < cheapTickets.length && i < MAX_COUNT; i++) {
         const ticket = createCard(cheapTickets[i]);
         otherCheapTickets.append(ticket);
     }
 
-    console.log(cheapTickets); 
+    console.log(cheapTickets);
 };
 
-const renderCheap = (data, date) => { 
-    const CheapTickets = JSON.parse(data).best_prices;    
+const renderCheap = (data, date) => {
+    const CheapTickets = JSON.parse(data).best_prices;
     const CheapTicketOnThatDay = CheapTickets.filter((item) => item.depart_date === date);
 
     renderCheapYear(CheapTickets);
@@ -200,7 +200,7 @@ formSearch.addEventListener('submit', (event) => {
     event.preventDefault();
 
     const formData = {
-        from: city.find((item) => inputCitiesFrom.value === item.name),  // search the same item.code in the cities and return it if found
+        from: city.find((item) => inputCitiesFrom.value === item.name), // search the same item.code in the cities and return it if found
         to: city.find((item) => inputСitiesTo.value === item.name),
         date: inputDateDepart.value,
     };
@@ -211,6 +211,9 @@ formSearch.addEventListener('submit', (event) => {
 
         getData(calendar + requestString2, (response) => {
             renderCheap(response, formData.date);
+        }, (error) => {
+            alert('В этом направлении нет рейсов!');
+            console.error('error: ', error);
         });
     } else {
         alert('Введите корректное название города');
@@ -219,22 +222,16 @@ formSearch.addEventListener('submit', (event) => {
 
 // вызов функций
 
-/* 
-getData(citiesApi, (data) => {  // proxy + citiesApi_link
-    city = JSON.parse(data).filter(() => {
-        return item.name
-    });
- });
- */
+getData(proxy + citiesApi_link, (data) => {
+    city = JSON.parse(data).filter((item) => item.name);
 
-// the same but shortest
-getData(proxy + citiesApi_link, 
-    (data) => city = JSON.parse(data).filter((item) => item.name));
     city.sort((a, b) => {
         if (a.name > b.name) return 1;
         if (a.name < b.name) return -1;
         return 0;
     });
+    console.log(city);
+});
 
 
 
@@ -249,4 +246,3 @@ getData(proxy + calendar +
 */
 
 // upd check prices for any direction
-

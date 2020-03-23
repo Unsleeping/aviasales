@@ -223,7 +223,7 @@ input {
     border-radius: 5px;
     -webkit-box-shadow: 0 1px 5px rgba(0, 0, 0, .15);
     box-shadow: 0 1px 5px rgba(0, 0, 0, .15);
-    background-color: #999;
+    background-color: #1e3c53;
 }
 
 .ticket__wrapper {
@@ -300,18 +300,4 @@ input {
 input {
     position: relative;
     z-index: 1;
-}
-
-
-/* то что я правил */
-
-.ticket__wrapper,
-.block__ticket {
-    background-color: #1e3c53;
-    border-radius: 5px;
-    margin-bottom: 100px;
-}
-
-h2 {
-    background-color: #05263F;
 }
