@@ -1,3 +1,4 @@
+// data
 const formSearch = document.querySelector('.form-search'),
     inputCitiesFrom = formSearch.querySelector('.input__cities-from'),
     dropdownCitiesFrom = formSearch.querySelector('.dropdown__cities-from'),
@@ -13,6 +14,10 @@ const citiesApi = 'cities.json',
     proxy = 'https://cors-anywhere.herokuapp.com/',
     API_KEY = 'a866e1486ad6e2654346f27969b715f3',
     calendar = 'http://min-prices.aviasales.ru/calendar_preload';
+
+
+
+// инициализация функций
 
 // get Data from the service
 const getData = (url, callback) => {
@@ -55,7 +60,28 @@ const placeCity = (event, input, list) => {
         input.value = target.textContent;
         list.textContent = '';
     }
-}
+};
+
+const renderCheapDay = (cheapTicketOnThatDay) => {
+    console.log(cheapTicketOnThatDay); 
+};
+
+const renderCheapYear = (cheapTickets) => {
+    console.log(cheapTickets); 
+};
+
+const renderCheap = (data, date) => { 
+    const CheapTickets = JSON.parse(data).best_prices;    
+    const CheapTicketOnThatDay = CheapTickets.filter((item) => item.depart_date === date);
+
+    renderCheapYear(CheapTickets);
+    renderCheapDay(CheapTicketOnThatDay);
+
+};
+
+
+
+// обработчики событий
 
 inputCitiesFrom.addEventListener('input', () => {
     showCity(inputCitiesFrom, dropdownCitiesFrom);
@@ -73,18 +99,53 @@ dropdownCitiesTo.addEventListener('click', () => {
     placeCity(event, inputСitiesTo, dropdownCitiesTo);
 });
 
-// getData(citiesApi, (data) => {  // proxy + citiesApi_link
-//     city = JSON.parse(data).filter(() => {
-//         return item.name
-//     });
-// });
+formSearch.addEventListener('submit', (event) => {
+    event.preventDefault();
+
+    const formData = {
+        from: city.find((item) => inputCitiesFrom.value === item.name).code,  // search the same item.code in the cities and return it if found
+        to: city.find((item) => inputСitiesTo.value === item.name).code,
+        date: inputDateDepart.value,
+    };
+
+    // the same but with interpolation
+    const requestString2 = `?depart_date=${formData.date}&origin=${formData.from}&destination=${formData.to}&one_way=true`;
+
+    const requestString = '?depart_date=' + formData.date +
+     '&origin=' +formData.from +
+     '&destination=' + formData.to +
+     '&one_way=true';
+
+    getData(calendar + requestString, (response) => {
+        renderCheap(response, formData.date);
+    });
+});
+
+// вызов функций
+
+/* 
+getData(citiesApi, (data) => {  // proxy + citiesApi_link
+    city = JSON.parse(data).filter(() => {
+        return item.name
+    });
+ });
+ */
 
 // the same but shortest
-getData(citiesApi, 
+getData(proxy + citiesApi_link, 
     (data) => city = JSON.parse(data).filter((item) => item.name));
 
-// check prices for one direction Ekaterinburg -> 
-getData(proxy + calendar + '?depart_day=2020-05-29&origin=SVX&destination=KGD&one_way=true&token=' + API_KEY, (data) => {
+
+
+/* check prices for one direction Ekaterinburg -> Kaliningrad
+
+getData(proxy + calendar +
+    '?depart_day=2020-05-29&origin=SVX&destination=KGD&one_way=true&token=' + API_KEY,
+    (data) => {
     const cheapTicket = JSON.parse(data).best_prices.filter(item => item.depart_date === '2020-05-29')
     console.log(cheapTicket);
 });
+*/
+
+// upd check prices for any direction
+
