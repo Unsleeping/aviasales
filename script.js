@@ -43,7 +43,8 @@ const showCity = (input, list) => {
 
     const filterCity = city.filter((item) => {
         const fixItem = item.name.toLowerCase();
-        return fixItem.includes(input.value.toLowerCase())
+        // return fixItem.includes(input.value.toLowerCase()) // сортируем выпадающий список
+        return fixItem.startsWith(input.value.toLowerCase())
     });
 
     filterCity.forEach((item) => {
@@ -67,17 +68,19 @@ const renderCheapDay = (cheapTicketOnThatDay) => {
 };
 
 const renderCheapYear = (cheapTickets) => {
-    cheapTickets.sort((a, b) => {
-        if (a.value > b.value) {
-            return 1;
-        }
-        if (a.value < b.value) {
-            return -1;
-        }
-        if (a.value = b.value) {
-            return 0;
-        }
-      });
+    cheapTickets.sort((a, b) => a.value - b.value);
+        // the same
+        // (a, b) => {
+        // if (a.value > b.value) {
+        //     return 1;
+        // }
+        // if (a.value < b.value) {
+        //     return -1;
+        // }
+        // if (a.value = b.value) {
+        //     return 0;
+        // } 
+        //   });
     console.log(cheapTickets); 
 };
 
@@ -114,22 +117,23 @@ formSearch.addEventListener('submit', (event) => {
     event.preventDefault();
 
     const formData = {
-        from: city.find((item) => inputCitiesFrom.value === item.name).code,  // search the same item.code in the cities and return it if found
-        to: city.find((item) => inputСitiesTo.value === item.name).code,
+        from: city.find((item) => inputCitiesFrom.value === item.name),  // search the same item.code in the cities and return it if found
+        to: city.find((item) => inputСitiesTo.value === item.name),
         date: inputDateDepart.value,
     };
+    if (formData.to && formData.from) {
+        // the same but with interpolation
+        const requestString2 = `?depart_date=${formData.date}&origin=${formData.from.code}&destination=${formData.to.code}&one_way=true`;
 
-    // the same but with interpolation
-    const requestString2 = `?depart_date=${formData.date}&origin=${formData.from}&destination=${formData.to}&one_way=true`;
+        // const requestString = '?depart_date=' + formData.date +
+        // '&origin=' +formData.from.code +
+        // '&destination=' + formData.to.code +
+        // '&one_way=true';
 
-    const requestString = '?depart_date=' + formData.date +
-     '&origin=' +formData.from +
-     '&destination=' + formData.to +
-     '&one_way=true';
-
-    getData(calendar + requestString, (response) => {
-        renderCheap(response, formData.date);
-    });
+        getData(calendar + requestString2, (response) => {
+            renderCheap(response, formData.date);
+        });
+    }
 });
 
 // вызов функций
@@ -145,6 +149,11 @@ getData(citiesApi, (data) => {  // proxy + citiesApi_link
 // the same but shortest
 getData(proxy + citiesApi_link, 
     (data) => city = JSON.parse(data).filter((item) => item.name));
+    city.sort((a, b) => {
+        if (a.name > b.name) return 1;
+        if (a.name < b.name) return -1;
+        return 0;
+    });
 
 
 
