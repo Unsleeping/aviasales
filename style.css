@@ -9,9 +9,10 @@ input {
     z-index: 1;
 }
 
-.wrapper__ticket {
+.ticket__wrapper, .block__ticket {
     background-color: #1e3c53;
-    border-radius: 20px;
+    border-radius: 5px;
+    margin-bottom: 100px;
 }
 
 h2 {
